@@ -1,0 +1,28 @@
+[project]
+name = "ai-math-tutor"
+version = "0.1.0"
+description = "Socratic AI mathematics tutor backed by a deterministic SymPy engine"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.30,<1",
+    "sympy>=1.13,<2",
+    "sqlalchemy>=2.0,<3",
+    "httpx>=0.27,<1",
+    "pydantic>=2.8,<3",
+    "pydantic-settings>=2.4,<3",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.6,<1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

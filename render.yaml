@@ -1,0 +1,12 @@
+# One-click deployment on Render: New > Blueprint, then select this repository.
+services:
+  - type: web
+    name: ai-math-tutor
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: LLM_MODELS
+        value: nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3.5-super-vl:free,google/gemma-4-31b-it:free
