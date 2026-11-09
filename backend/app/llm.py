@@ -161,12 +161,12 @@ class OpenRouterClient:
         }
         # A 400 means this model rejects a request feature, and is not charged to the quota.
         attempts = (
-            (messages, schema_format),
-            (messages, None),
-            (_merge_system_into_user(messages), None),
+            (messages, schema_format, True),
+            (messages, None, False),
+            (_merge_system_into_user(messages), None, False),
         )
         error = LLMError("unavailable", "No attempt was made")
-        for attempt_messages, response_format in attempts:
+        for attempt_messages, response_format, brief_reasoning in attempts:
             body: dict = {
                 "model": model,
                 "messages": attempt_messages,
@@ -174,6 +174,10 @@ class OpenRouterClient:
             }
             if response_format:
                 body["response_format"] = response_format
+            if brief_reasoning:
+                # Reasoning models can spend the whole token budget thinking and return an
+                # empty answer; a tutor's turn needs little deliberation.
+                body["reasoning"] = {"effort": "low"}
             try:
                 response = self.client.post("/chat/completions", json=body)
             except httpx.HTTPError as exc:
@@ -200,12 +204,14 @@ class OpenRouterClient:
             payload = response.json()
             if "error" in payload:
                 raise LLMError("unavailable", str(payload["error"])[:300])
-            content = payload["choices"][0]["message"].get("content") or ""
+            choice = payload["choices"][0]
+            content = choice["message"].get("content") or ""
         except (ValueError, KeyError, IndexError, TypeError) as exc:
             raise LLMError("unavailable", "Malformed response") from exc
         data = parse_model_output(content)
         if not data["message"].strip():
-            raise LLMError("unavailable", "Empty response")
+            reason = choice.get("finish_reason")
+            raise LLMError("unavailable", f"Empty response (finish_reason={reason})")
         return LLMResult(data=data, model=payload.get("model", model))
 
 

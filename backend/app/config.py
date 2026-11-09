@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = 40.0
     llm_retry_window_seconds: float = 25.0
     llm_retry_pause_seconds: float = 3.0
-    llm_max_tokens: int = 1500
+    llm_max_tokens: int = 4000
     public_url: str = "http://localhost:8000"
 
     database_url: str = f"sqlite:///{ROOT / 'data' / 'tutor.db'}"
