@@ -18,7 +18,11 @@ Arithmetic errors are caught in every chapter, including when the student checks
 
 ## Run it
 
-**Live demo:** _link added after deployment_
+**Live demo:** <https://ai-math-tutor-mhca.onrender.com>
+
+It runs on free hosting and free AI models. After a period without visitors, the first page load
+can take about a minute while the server starts. If the free AI models are busy, the tutor says so
+and you can send the message again.
 
 **With Docker:**
 
